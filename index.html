@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Calendrier 2026 - NTIC Solution</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4 portrait; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #fff;
+    color: #0A2A5E;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Hauteur A4 figée pour PDF */
+    height: 297mm;
+    max-height: 297mm;
+  }
+
+  /* ============ HEADER ============ */
+  .header {
+    flex: 0 0 auto;
+    background: linear-gradient(135deg, #0A2A5E 0%, #123C7E 100%);
+    color: #fff;
+    padding: 12px 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 4px solid #F77F00;
+  }
+  .logo-box { display: flex; align-items: center; gap: 14px; }
+  .logo-box img {
+    height: 52px; width: auto; object-fit: contain;
+    background: #fff; padding: 3px; border-radius: 6px;
+  }
+  .brand-text h1 { font-size: 22px; font-weight: 900; line-height: 1; letter-spacing: 1px; }
+  .brand-text h1 span { color: #F77F00; }
+  .brand-text p {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    opacity: 0.9; margin-top: 3px;
+  }
+  .year-badge {
+    background: #F77F00; color: #fff;
+    font-size: 30px; font-weight: 900;
+    padding: 4px 18px; border-radius: 10px;
+    letter-spacing: 2px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  }
+
+  /* ============ SLOGAN ============ */
+  .slogan {
+    flex: 0 0 auto;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+    background: #fafbfd;
+    border-bottom: 1px solid #eef2f7;
+  }
+  .slogan span { color: #F77F00; }
+
+  /* ============ GRILLE ============ */
+  .grid {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 6px;
+    padding: 8px 14px 6px;
+    min-height: 0;
+  }
+
+  .month {
+    border: 1px solid #dfe6f0;
+    border-radius: 7px;
+    overflow: hidden;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    box-shadow: 0 1px 4px rgba(10,42,94,0.05);
+  }
+  .month-title {
+    flex: 0 0 auto;
+    background: #0A2A5E;
+    color: #fff;
+    text-align: center;
+    padding: 3px 0;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .month-title span { color: #F77F00; margin-left: 3px; }
+
+  .month table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .month th {
+    color: #F77F00;
+    font-weight: 800;
+    font-size: 8px;
+    text-transform: uppercase;
+    padding: 1px 0;
+    border-bottom: 1px solid #eef2f7;
+    height: 12px;
+  }
+  .month td {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: #0A2A5E;
+    vertical-align: middle;
+    border: 1px solid #f2f5f9;
+    position: relative;
+    height: auto;
+  }
+  .month td.weekend { color: #F77F00; font-weight: 800; }
+  .month td.empty { color: transparent; background: #fafbfd; }
+  .month td.holiday { background: #FFF4E6; color: #F77F00; font-weight: 900; }
+  .month td.holiday::after {
+    content: "";
+    position: absolute;
+    bottom: 1px; left: 50%;
+    transform: translateX(-50%);
+    width: 3px; height: 3px;
+    background: #F77F00;
+    border-radius: 50%;
+  }
+
+  /* ============ SERVICES ============ */
+  .services {
+    flex: 0 0 auto;
+    background: linear-gradient(135deg, #0A2A5E 0%, #123C7E 100%);
+    color: #fff;
+    padding: 7px 18px;
+    border-top: 3px solid #F77F00;
+    border-bottom: 3px solid #F77F00;
+  }
+  .services-title {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #F77F00;
+    margin-bottom: 5px;
+  }
+  .services-title::before,
+  .services-title::after {
+    content: "◆";
+    margin: 0 10px;
+    font-size: 8px;
+    vertical-align: middle;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px 14px;
+  }
+  .service-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .service-item .dot {
+    width: 7px; height: 7px;
+    background: #F77F00;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px rgba(247,127,0,0.2);
+  }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    flex: 0 0 auto;
+    background: #0A2A5E;
+    color: #fff;
+    border-top: 4px solid #F77F00;
+    padding: 8px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .footer-left {
+    display: flex; flex-direction: column;
+    gap: 3px; font-size: 9px; line-height: 1.5;
+  }
+  .footer-tagline {
+    font-size: 8.5px; letter-spacing: 2px;
+    text-transform: uppercase; color: #F77F00;
+    font-weight: 800;
+  }
+  .footer-contact strong { color: #F77F00; }
+
+  .footer-block {
+    text-align: center;
+    border-left: 1px solid rgba(255,255,255,0.2);
+    border-right: 1px solid rgba(255,255,255,0.2);
+    padding: 0 14px;
+  }
+  .phone-label {
+    font-size: 7.5px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #F77F00;
+    display: block; margin-bottom: 1px; font-weight: 700;
+  }
+  .phone {
+    font-size: 12px; font-weight: 800;
+    color: #fff; white-space: nowrap;
+  }
+  .phone::before { content: "📞 "; color: #F77F00; }
+
+  .footer-right {
+    text-align: right; font-size: 9px; line-height: 1.6;
+  }
+  .footer-right .web { color: #fff; font-weight: 700; font-size: 9.5px; }
+  .footer-right .socials {
+    color: #F77F00; font-weight: 700;
+    font-size: 9.5px; margin-top: 2px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo-box">
+      <img src="logo.png" alt="NTIC Solution">
+      <div class="brand-text">
+        <h1>NTIC <span>Solution</span></h1>
+        <p>Marketing Digital • Univers Digital</p>
+      </div>
+    </div>
+    <div class="year-badge">2026</div>
+  </div>
+
+  <div class="slogan">Votre partenaire <span>digital</span> au Burkina Faso</div>
+
+  <div class="grid" id="calendar"></div>
+
+  <div class="services">
+    <div class="services-title">Nos Formations & Services</div>
+    <div class="services-grid">
+      <div class="service-item"><span class="dot"></span>Création et gestion de site web</div>
+      <div class="service-item"><span class="dot"></span>Création d'applications mobiles</div>
+      <div class="service-item"><span class="dot"></span>Création et gestion des publicités</div>
+      <div class="service-item"><span class="dot"></span>Création de stratégie marketing</div>
+      <div class="service-item"><span class="dot"></span>Conception graphique</div>
+      <div class="service-item"><span class="dot"></span>Community management</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-left">
+      <div class="footer-tagline">Boostez votre présence en ligne</div>
+      <div class="footer-contact">
+        <strong>📍</strong> Banfora, Secteur 15 — Burkina Faso<br>
+        <strong>✉️</strong> contact@nticsolution.com
+      </div>
+    </div>
+
+    <div class="footer-block">
+      <span class="phone-label">Standard</span>
+      <span class="phone">+226 69 69 69 24</span>
+    </div>
+
+    <div class="footer-block">
+      <span class="phone-label">Commercial</span>
+      <span class="phone">05 58 58 68</span>
+    </div>
+
+    <div class="footer-right">
+      <div class="web">🌐 www.nticsolution.com</div>
+      <div class="socials">f Facebook · ◎ Instagram · in LinkedIn · ♪ TikTok</div>
+    </div>
+  </div>
+
+<script>
+  const mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+  const jours = ["L","M","M","J","V","S","D"];
+  const y = 2026;
+  const feries = ["01-01","01-03","03-08","04-04","05-01","06-05","08-04","08-05","10-31","11-01","12-11","12-25"];
+
+  function daysInMonth(m) { return new Date(y, m + 1, 0).getDate(); }
+  function firstWeekday(m) {
+    let d = new Date(y, m, 1).getDay();
+    return (d === 0) ? 6 : d - 1;
+  }
+
+  const container = document.getElementById('calendar');
+
+  mois.forEach((nom, i) => {
+    const total = daysInMonth(i);
+    const start = firstWeekday(i);
+    const mm = String(i + 1).padStart(2, '0');
+
+    let html = `<div class="month">
+      <div class="month-title">${nom}<span>2026</span></div>
+      <table>
+        <tr>${jours.map(j => `<th>${j}</th>`).join('')}</tr>`;
+
+    let cell = 0;
+    for (let row = 0; row < 6; row++) {
+      html += '<tr>';
+      for (let col = 0; col < 7; col++) {
+        if (row === 0 && col < start) {
+          html += '<td class="empty">·</td>';
+        } else if (cell < total) {
+          cell++;
+          const dd = String(cell).padStart(2, '0');
+          const isWeekend = (col === 5 || col === 6);
+          const isFerie = feries.includes(`${mm}-${dd}`);
+          let cls = isWeekend ? 'weekend' : '';
+          if (isFerie) cls = 'holiday';
+          html += `<td class="${cls}">${cell}</td>`;
+        } else {
+          html += '<td class="empty">·</td>';
+        }
+      }
+      html += '</tr>';
+      if (cell >= total) break;
+    }
+
+    html += '</table></div>';
+    container.innerHTML += html;
+  });
+</script>
+
+</body>
+</html>
