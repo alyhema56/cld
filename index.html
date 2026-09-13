@@ -22,7 +22,6 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    /* Hauteur A4 figée pour PDF */
     height: 297mm;
     max-height: 297mm;
   }
@@ -32,22 +31,20 @@
     flex: 0 0 auto;
     background: linear-gradient(135deg, #0A2A5E 0%, #123C7E 100%);
     color: #fff;
-    padding: 12px 26px;
+    padding: 10px 26px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 4px solid #F77F00;
   }
-  .logo-box { display: flex; align-items: center; gap: 14px; }
+  .logo-box { display: flex; align-items: center; }
   .logo-box img {
-    height: 52px; width: auto; object-fit: contain;
-    background: #fff; padding: 3px; border-radius: 6px;
-  }
-  .brand-text h1 { font-size: 22px; font-weight: 900; line-height: 1; letter-spacing: 1px; }
-  .brand-text h1 span { color: #F77F00; }
-  .brand-text p {
-    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
-    opacity: 0.9; margin-top: 3px;
+    height: 72px;
+    width: 72px;
+    object-fit: contain;
+    background: transparent;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
   .year-badge {
     background: #F77F00; color: #fff;
@@ -210,6 +207,11 @@
     font-weight: 800;
   }
   .footer-contact strong { color: #F77F00; }
+  .footer-contact a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+  }
 
   .footer-block {
     text-align: center;
@@ -231,7 +233,10 @@
   .footer-right {
     text-align: right; font-size: 9px; line-height: 1.6;
   }
-  .footer-right .web { color: #fff; font-weight: 700; font-size: 9.5px; }
+  .footer-right .web {
+    color: #fff; font-weight: 700; font-size: 9.5px;
+    text-decoration: none;
+  }
   .footer-right .socials {
     color: #F77F00; font-weight: 700;
     font-size: 9.5px; margin-top: 2px;
@@ -240,21 +245,20 @@
 </head>
 <body>
 
+  <!-- ================= HEADER ================= -->
   <div class="header">
     <div class="logo-box">
       <img src="logo.png" alt="NTIC Solution">
-      <div class="brand-text">
-        <h1>NTIC <span>Solution</span></h1>
-        <p>Marketing Digital • Univers Digital</p>
-      </div>
     </div>
     <div class="year-badge">2026</div>
   </div>
 
   <div class="slogan">Votre partenaire <span>digital</span> au Burkina Faso</div>
 
+  <!-- ================= CALENDRIER ================= -->
   <div class="grid" id="calendar"></div>
 
+  <!-- ================= SERVICES ================= -->
   <div class="services">
     <div class="services-title">Nos Formations & Services</div>
     <div class="services-grid">
@@ -267,12 +271,13 @@
     </div>
   </div>
 
+  <!-- ================= FOOTER ================= -->
   <div class="footer">
     <div class="footer-left">
       <div class="footer-tagline">Boostez votre présence en ligne</div>
       <div class="footer-contact">
         <strong>📍</strong> Banfora, Secteur 15 — Burkina Faso<br>
-        <strong>✉️</strong> contact@nticsolution.com
+        <strong>🌐</strong> <a href="https://www.nticsolution.org">www.nticsolution.org</a>
       </div>
     </div>
 
@@ -287,7 +292,7 @@
     </div>
 
     <div class="footer-right">
-      <div class="web">🌐 www.nticsolution.com</div>
+      <a class="web" href="https://www.nticsolution.org">🌐 www.nticsolution.org</a>
       <div class="socials">f Facebook · ◎ Instagram · in LinkedIn · ♪ TikTok</div>
     </div>
   </div>
