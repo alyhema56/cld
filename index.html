@@ -4,26 +4,71 @@
 <meta charset="UTF-8">
 <title>Calendrier 2026 - NTIC Solution</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   @page { size: A4 portrait; margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   html, body {
-    width: 210mm;
-    height: 297mm;
     margin: 0;
     padding: 0;
+    background: #e9edf3;
+    font-family: 'Montserrat', sans-serif;
   }
 
-  body {
+  /* ============ BOUTON TÉLÉCHARGER ============ */
+  .download-bar {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 9999;
+  }
+  .btn-download {
+    background: linear-gradient(135deg, #F77F00 0%, #e06c00 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
     font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(247,127,0,0.45);
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(247,127,0,0.6);
+  }
+  .btn-download:active { transform: translateY(0); }
+  .btn-download:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+  }
+  .btn-download svg {
+    width: 16px;
+    height: 16px;
+    fill: #fff;
+    flex-shrink: 0;
+  }
+
+  /* ============ PAGE A4 ============ */
+  .page {
+    width: 210mm;
+    height: 297mm;
+    margin: 20px auto;
     background: #fff;
-    color: #0A2A5E;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    height: 297mm;
-    max-height: 297mm;
+    box-shadow: 0 8px 30px rgba(10,42,94,0.15);
+    color: #0A2A5E;
   }
 
   /* ============ HEADER ============ */
@@ -129,7 +174,11 @@
   }
   .month td.weekend { color: #F77F00; font-weight: 800; }
   .month td.empty { color: transparent; background: #fafbfd; }
-  .month td.holiday { background: #FFF4E6; color: #F77F00; font-weight: 900; }
+  .month td.holiday {
+    background: #FFF4E6;
+    color: #F77F00;
+    font-weight: 900;
+  }
   .month td.holiday::after {
     content: "";
     position: absolute;
@@ -185,6 +234,46 @@
     box-shadow: 0 0 0 3px rgba(247,127,0,0.2);
   }
 
+  /* ============ ÉVÉNEMENTS ============ */
+  .events {
+    flex: 0 0 auto;
+    background: #fafbfd;
+    border-top: 2px solid #F77F00;
+    padding: 6px 14px;
+    font-size: 8px;
+    line-height: 1.5;
+    color: #0A2A5E;
+  }
+  .events-title {
+    font-weight: 900;
+    color: #F77F00;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 8.5px;
+    margin-bottom: 3px;
+    text-align: center;
+  }
+  .events-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px 12px;
+  }
+  .event-item {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .event-item .date {
+    color: #F77F00;
+    font-weight: 800;
+    flex-shrink: 0;
+    min-width: 40px;
+  }
+  .event-item .name {
+    font-weight: 600;
+    color: #0A2A5E;
+  }
+
   /* ============ FOOTER ============ */
   .footer {
     flex: 0 0 auto;
@@ -207,10 +296,17 @@
     font-weight: 800;
   }
   .footer-contact strong { color: #F77F00; }
-  .footer-contact a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 700;
+  .footer-contact a { color: #fff; text-decoration: none; font-weight: 700; }
+
+  .footer-contact .line {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .footer-contact .line svg {
+    width: 10px; height: 10px;
+    fill: #F77F00;
+    flex-shrink: 0;
   }
 
   .footer-block {
@@ -227,8 +323,15 @@
   .phone {
     font-size: 12px; font-weight: 800;
     color: #fff; white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
   }
-  .phone::before { content: "📞 "; color: #F77F00; }
+  .phone svg {
+    width: 11px; height: 11px;
+    fill: #F77F00;
+    flex-shrink: 0;
+  }
 
   .footer-right {
     text-align: right; font-size: 9px; line-height: 1.6;
@@ -236,72 +339,196 @@
   .footer-right .web {
     color: #fff; font-weight: 700; font-size: 9.5px;
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .footer-right .web svg {
+    width: 11px; height: 11px;
+    fill: #F77F00;
   }
   .footer-right .socials {
     color: #F77F00; font-weight: 700;
     font-size: 9.5px; margin-top: 2px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+  }
+  .footer-right .socials svg {
+    width: 11px; height: 11px;
+    fill: #F77F00;
+  }
+
+  /* ============ RESPONSIVE ÉCRAN ============ */
+  @media screen and (max-width: 900px) {
+    .page {
+      width: 100%;
+      height: auto;
+      margin: 10px;
+    }
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: auto;
+    }
+    .events-list, .services-grid {
+      grid-template-columns: 1fr;
+    }
+    .footer {
+      flex-direction: column;
+      text-align: center;
+    }
+    .footer-right { text-align: center; }
+    .footer-right .socials { justify-content: center; }
   }
 </style>
 </head>
 <body>
 
-  <!-- ================= HEADER ================= -->
-  <div class="header">
-    <div class="logo-box">
-      <img src="logo.png" alt="NTIC Solution">
-    </div>
-    <div class="year-badge">2026</div>
+  <!-- ============ BOUTON TÉLÉCHARGER ============ -->
+  <div class="download-bar">
+    <button class="btn-download" id="btnDownload">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 16l-6-6h4V4h4v6h4l-6 6zm-8 2h16v2H4v-2z"/>
+      </svg>
+      Télécharger en PDF
+    </button>
   </div>
 
-  <div class="slogan">Votre partenaire <span>digital</span> au Burkina Faso</div>
+  <!-- ============ PAGE A4 ============ -->
+  <div class="page" id="calendarPage">
 
-  <!-- ================= CALENDRIER ================= -->
-  <div class="grid" id="calendar"></div>
-
-  <!-- ================= SERVICES ================= -->
-  <div class="services">
-    <div class="services-title">Nos Formations & Services</div>
-    <div class="services-grid">
-      <div class="service-item"><span class="dot"></span>Création et gestion de site web</div>
-      <div class="service-item"><span class="dot"></span>Création d'applications mobiles</div>
-      <div class="service-item"><span class="dot"></span>Création et gestion des publicités</div>
-      <div class="service-item"><span class="dot"></span>Création de stratégie marketing</div>
-      <div class="service-item"><span class="dot"></span>Conception graphique</div>
-      <div class="service-item"><span class="dot"></span>Community management</div>
+    <!-- HEADER -->
+    <div class="header">
+      <div class="logo-box">
+        <img src="images/file.webp" alt="NTIC Solution">
+      </div>
+      <div class="year-badge">2026</div>
     </div>
-  </div>
 
-  <!-- ================= FOOTER ================= -->
-  <div class="footer">
-    <div class="footer-left">
-      <div class="footer-tagline">Boostez votre présence en ligne</div>
-      <div class="footer-contact">
-        <strong>📍</strong> Banfora, Secteur 15 — Burkina Faso<br>
-        <strong>🌐</strong> <a href="https://www.nticsolution.org">www.nticsolution.org</a>
+    <div class="slogan">Votre partenaire <span>digital</span> au Burkina Faso</div>
+
+    <!-- CALENDRIER -->
+    <div class="grid" id="calendar"></div>
+
+    <!-- SERVICES -->
+    <div class="services">
+      <div class="services-title">Nos Formations & Services</div>
+      <div class="services-grid">
+        <div class="service-item"><span class="dot"></span>Création et gestion de site web</div>
+        <div class="service-item"><span class="dot"></span>Création d'applications mobiles</div>
+        <div class="service-item"><span class="dot"></span>Création et gestion des publicités</div>
+        <div class="service-item"><span class="dot"></span>Création de stratégie marketing</div>
+        <div class="service-item"><span class="dot"></span>Conception graphique</div>
+        <div class="service-item"><span class="dot"></span>Community management</div>
       </div>
     </div>
 
-    <div class="footer-block">
-      <span class="phone-label">Standard</span>
-      <span class="phone">+226 69 69 69 24</span>
+    <!-- ÉVÉNEMENTS -->
+    <div class="events">
+      <div class="events-title">◆ Jours fériés & Événements au Burkina Faso ◆</div>
+      <div class="events-list">
+        <div class="event-item"><span class="date">01 Jan</span><span class="name">Jour de l'An</span></div>
+        <div class="event-item"><span class="date">03 Jan</span><span class="name">Révolution 1966</span></div>
+        <div class="event-item"><span class="date">08 Mars</span><span class="name">Journée de la Femme</span></div>
+        <div class="event-item"><span class="date">04 Avril</span><span class="name">Insurrection 2014</span></div>
+        <div class="event-item"><span class="date">01 Mai</span><span class="name">Fête du Travail</span></div>
+        <div class="event-item"><span class="date">05 Juin</span><span class="name">Ascension</span></div>
+        <div class="event-item"><span class="date">04 Août</span><span class="name">Révolution 1983</span></div>
+        <div class="event-item"><span class="date">05 Août</span><span class="name">Fête Nationale</span></div>
+        <div class="event-item"><span class="date">31 Oct</span><span class="name">Journée de la Révolution</span></div>
+        <div class="event-item"><span class="date">01 Nov</span><span class="name">Toussaint</span></div>
+        <div class="event-item"><span class="date">11 Déc</span><span class="name">Proclamation République</span></div>
+        <div class="event-item"><span class="date">25 Déc</span><span class="name">Noël</span></div>
+      </div>
     </div>
 
-    <div class="footer-block">
-      <span class="phone-label">Commercial</span>
-      <span class="phone">05 58 58 68</span>
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="footer-left">
+        <div class="footer-tagline">Boostez votre présence en ligne</div>
+        <div class="footer-contact">
+          <div class="line">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/>
+            </svg>
+            <span>Banfora, Secteur 15 — Burkina Faso</span>
+          </div>
+          <div class="line">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm6.93 6h-2.95a15.65 15.65 0 00-1.38-3.56A8.03 8.03 0 0118.93 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14a8.07 8.07 0 010-4h3.38c-.16 1.32-.16 2.68 0 4H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A8.03 8.03 0 015.08 16zm2.95-8H5.08a8.03 8.03 0 014.33-3.56A15.65 15.65 0 008.03 8zM12 19.96a13.6 13.6 0 01-1.91-3.96h3.82A13.6 13.6 0 0112 19.96zM14.34 14H9.66c-.2-1.32-.2-2.68 0-4h4.68c.2 1.32.2 2.68 0 4zm.42 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 01-4.33 3.56zM16.36 14c.16-1.32.16-2.68 0-4h3.38a8.07 8.07 0 010 4h-3.38z"/>
+            </svg>
+            <a href="https://www.nticsolution.org">www.nticsolution.org</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-block">
+        <span class="phone-label">Standard</span>
+        <span class="phone">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.05-.24 11.36 11.36 0 003.57.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.24 1.05l-2.21 2.17z"/>
+          </svg>
+          +226 69 69 69 24
+        </span>
+      </div>
+
+      <div class="footer-block">
+        <span class="phone-label">Commercial</span>
+        <span class="phone">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.05-.24 11.36 11.36 0 003.57.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.24 1.05l-2.21 2.17z"/>
+          </svg>
+          05 58 58 68
+        </span>
+      </div>
+
+      <div class="footer-right">
+        <a class="web" href="https://www.nticsolution.org">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm6.93 6h-2.95a15.65 15.65 0 00-1.38-3.56A8.03 8.03 0 0118.93 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14a8.07 8.07 0 010-4h3.38c-.16 1.32-.16 2.68 0 4H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A8.03 8.03 0 015.08 16zm2.95-8H5.08a8.03 8.03 0 014.33-3.56A15.65 15.65 0 008.03 8zM12 19.96a13.6 13.6 0 01-1.91-3.96h3.82A13.6 13.6 0 0112 19.96zM14.34 14H9.66c-.2-1.32-.2-2.68 0-4h4.68c.2 1.32.2 2.68 0 4zm.42 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 01-4.33 3.56zM16.36 14c.16-1.32.16-2.68 0-4h3.38a8.07 8.07 0 010 4h-3.38z"/>
+          </svg>
+          www.nticsolution.org
+        </a>
+        <div class="socials">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.45 2.89h-2.33v6.99A10 10 0 0022 12z"/>
+          </svg>
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 01-1.38-.9 3.7 3.7 0 01-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07zM12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.3-1.46.72-2.13 1.38A5.9 5.9 0 00.63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.3.79.72 1.46 1.38 2.13a5.9 5.9 0 002.13 1.38c.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.9 5.9 0 002.13-1.38 5.9 5.9 0 001.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 00-1.38-2.13A5.9 5.9 0 0019.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zm0 10.16a4 4 0 110-8 4 4 0 010 8zm7.85-10.4a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"/>
+          </svg>
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14zM8.34 18.34V9.5H5.67v8.84h2.67zM7 8.28a1.55 1.55 0 100-3.1 1.55 1.55 0 000 3.1zm11.34 10.06v-4.85c0-2.6-1.39-3.81-3.24-3.81-1.5 0-2.17.82-2.54 1.4V9.5h-2.67c.04.75 0 8.84 0 8.84h2.67v-4.93c0-.24.02-.48.09-.65.19-.48.62-.97 1.35-.97.95 0 1.33.72 1.33 1.78v4.77h2.67z"/>
+          </svg>
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
+          </svg>
+        </div>
+      </div>
     </div>
 
-    <div class="footer-right">
-      <a class="web" href="https://www.nticsolution.org">🌐 www.nticsolution.org</a>
-      <div class="socials">f Facebook · ◎ Instagram · in LinkedIn · ♪ TikTok</div>
-    </div>
   </div>
 
 <script>
+  /* ============ GÉNÉRATION CALENDRIER ============ */
   const mois = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
   const jours = ["L","M","M","J","V","S","D"];
   const y = 2026;
-  const feries = ["01-01","01-03","03-08","04-04","05-01","06-05","08-04","08-05","10-31","11-01","12-11","12-25"];
+
+  const feries = {
+    "01-01": "Jour de l'An",
+    "01-03": "Révolution 1966",
+    "03-08": "Journée de la Femme",
+    "04-04": "Insurrection 2014",
+    "05-01": "Fête du Travail",
+    "06-05": "Ascension",
+    "08-04": "Révolution 1983",
+    "08-05": "Fête Nationale",
+    "10-31": "Journée de la Révolution",
+    "11-01": "Toussaint",
+    "12-11": "Proclamation République",
+    "12-25": "Noël"
+  };
 
   function daysInMonth(m) { return new Date(y, m + 1, 0).getDate(); }
   function firstWeekday(m) {
@@ -331,10 +558,15 @@
           cell++;
           const dd = String(cell).padStart(2, '0');
           const isWeekend = (col === 5 || col === 6);
-          const isFerie = feries.includes(`${mm}-${dd}`);
+          const key = `${mm}-${dd}`;
+          const isFerie = feries.hasOwnProperty(key);
           let cls = isWeekend ? 'weekend' : '';
-          if (isFerie) cls = 'holiday';
-          html += `<td class="${cls}">${cell}</td>`;
+          let title = '';
+          if (isFerie) {
+            cls = 'holiday';
+            title = ` title="${feries[key]}"`;
+          }
+          html += `<td class="${cls}"${title}>${cell}</td>`;
         } else {
           html += '<td class="empty">·</td>';
         }
@@ -345,6 +577,44 @@
 
     html += '</table></div>';
     container.innerHTML += html;
+  });
+
+  /* ============ TÉLÉCHARGEMENT PDF ============ */
+  document.getElementById('btnDownload').addEventListener('click', function() {
+    const btn = this;
+    const element = document.getElementById('calendarPage');
+
+    btn.disabled = true;
+    btn.innerHTML = "Génération en cours...";
+
+    const opt = {
+      margin: 0,
+      filename: 'Calendrier-2026-NTIC-Solution.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: {
+        scale: 3,
+        useCORS: true,
+        letterRendering: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      },
+      jsPDF: {
+        unit: 'mm',
+        format: 'a4',
+        orientation: 'portrait'
+      },
+      pagebreak: { mode: ['avoid-all'] }
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
+      btn.disabled = false;
+      btn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;fill:#fff;vertical-align:middle;margin-right:6px;"><path d="M12 16l-6-6h4V4h4v6h4l-6 6zm-8 2h16v2H4v-2z"/></svg> Télécharger en PDF`;
+    }).catch(err => {
+      console.error(err);
+      btn.disabled = false;
+      btn.innerHTML = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px;fill:#fff;vertical-align:middle;margin-right:6px;"><path d="M12 16l-6-6h4V4h4v6h4l-6 6zm-8 2h16v2H4v-2z"/></svg> Télécharger en PDF`;
+      alert("Erreur lors de la génération du PDF.");
+    });
   });
 </script>
 
